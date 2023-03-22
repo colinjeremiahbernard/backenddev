@@ -1,6 +1,6 @@
 import Reserve from '../models/Reserve';
 import User from '../models/User';
-import House from '../models/Reserve';
+import House from '../models/House';
 import mongoose from 'mongoose';
 
 class ReserveController {
@@ -13,8 +13,9 @@ class ReserveController {
     const { user_id } = req.headers;
     const { house_id } = req.params;
     const { date } = req.body;
-    if (mongoose.Types.ObjectId.isValid(House_id)) {
-    const house = await House.findById(House_id);
+    let house = {};
+    if (mongoose.Types.ObjectId.isValid(house_id)) {
+    house = await House.findById(house_id);
     if (!house) {
       return res.status(400).json({ error: "Essa casa nao existe!" });
     }
@@ -22,7 +23,7 @@ class ReserveController {
     else {
       return res.status(406).json({ error: 'Codigo da casa invalido' });
     }
-    if (house.status !== true) {
+    if (House.status !== true) {
       return res.status(400).json({ error: "Solicitação indisponivel" });
     }
     const user = await User.findById(user_id);
@@ -40,6 +41,14 @@ class ReserveController {
   }
   async destroy(req, res) {
     const { reserve_id } = req.body;
+    if (mongoose.Types.ObjectId.isValid(reserve_id)) {
+      const reserva = await House.findById(reserve_id);
+      if (!reserva) {
+        return res.status(400).json({ error: "Essa reserva nao existe" });
+      } else {
+        return res.status(406).json({ error: "Codigo da reserva invalido!" });
+      }
+    }
     await Reserve.findByIdAndDelete({ _id: reserve_id });
     return res.send();
   }
